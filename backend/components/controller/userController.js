@@ -2,7 +2,8 @@ const userService = require('../services/userService');
 
 exports.getUser = async (req, res) => {
     try {
-        const user = await userService.getUser(req.params.username);
+        const { username } = req.params;
+        const user = await userService.getUser(username);
         res.status(200).json(user);
     } catch (error) {
         console.error('Error fetching user:', error);
@@ -10,9 +11,24 @@ exports.getUser = async (req, res) => {
     }
 };
 
+exports.findMutualFollowers = async (req, res) => {
+    try {
+        const mutualFollowers = await userService.findMutualFollowers();
+        res.status(200).json(mutualFollowers);
+    } catch (error) {
+        console.error('Error finding mutual followers:', error);
+        res.status(500).json({ error: 'Failed to find mutual followers' });
+    }
+};
+
+
 exports.updateUser = async (req, res) => {
     try {
-        await userService.updateUser(req.params.username, req.body);
+        const { username } = req.params;
+        const { location, blog, bio } = req.body;
+
+        const user = await userService.updateUser(username, location, blog, bio);
+
         res.status(200).json({ message: 'User updated successfully' });
     } catch (error) {
         console.error('Error updating user:', error);
@@ -22,7 +38,9 @@ exports.updateUser = async (req, res) => {
 
 exports.softDeleteUser = async (req, res) => {
     try {
-        await userService.softDeleteUser(req.params.username);
+        const {username} = req.params;
+        const user = await userService.softDeleteUser(username);
+
         res.status(200).json({ message: 'User soft deleted successfully' });
     } catch (error) {
         console.error('Error soft deleting user:', error);
@@ -32,10 +50,26 @@ exports.softDeleteUser = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
     try {
-        const users = await userService.getUsers(req.query.sortBy);
+        const { sortBy } = req.query;
+        const users = await userService.getUsers(sortBy);
+
         res.status(200).json(users);
     } catch (error) {
         console.error('Error fetching users:', error);
         res.status(500).json({ error: 'Failed to fetch users' });
     }
 };
+
+exports.searchUser = async (req,res) => {
+    try{
+        const { username, location } = req.query;
+        const users = await userService(username, location);
+
+        res.status(200).json(users);
+    }
+    catch(error){
+        res.status(500).json({
+            error: error.message,
+        })
+    }
+}
