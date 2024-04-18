@@ -1,4 +1,4 @@
-const userService = require('../services/userService');
+const userService = require('../services/userServices');
 
 exports.getUser = async (req, res) => {
     try {
@@ -11,13 +11,13 @@ exports.getUser = async (req, res) => {
     }
 };
 
-exports.findMutualFollowers = async (req, res) => {
+exports.findMutualFriends = async (req, res) => {
     try {
-        const mutualFollowers = await userService.findMutualFollowers();
-        res.status(200).json(mutualFollowers);
+        const { username } = req.params;
+        const mutualFriends = await userService.findMutualFriends(username);
+        res.status(200).json(mutualFriends);
     } catch (error) {
-        console.error('Error finding mutual followers:', error);
-        res.status(500).json({ error: 'Failed to find mutual followers' });
+        res.status(500).json({ error: 'Failed to find and save mutual friends' });
     }
 };
 
@@ -27,9 +27,9 @@ exports.updateUser = async (req, res) => {
         const { username } = req.params;
         const { location, blog, bio } = req.body;
 
-        const user = await userService.updateUser(username, location, blog, bio);
+        const user = await userService.updateUser({username, location, blog, bio});
 
-        res.status(200).json({ message: 'User updated successfully' });
+        res.status(200).json(user);
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).json({ error: 'Failed to update user' });
@@ -63,7 +63,7 @@ exports.getUsers = async (req, res) => {
 exports.searchUser = async (req,res) => {
     try{
         const { username, location } = req.query;
-        const users = await userService(username, location);
+        const users = await userService.searchUser({username, location});
 
         res.status(200).json(users);
     }

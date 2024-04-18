@@ -8,7 +8,8 @@ exports.getUser = async (username) => {
             // fetch data from api
             const res = await axios.get(`https://api.github.com/users/${username}`);
             const userData = res.data;
-            user = new User({
+            
+            let user = new User({
                 username: userData.login,
                 repos_url: userData.repos_url,
                 name: userData.name,
@@ -22,7 +23,17 @@ exports.getUser = async (username) => {
                 following: userData.following,
                 created_at: userData.created_at,
                 updated_at: userData.updated_at,
-            })
+                repositories: reposData.map(repo => ({
+                    username: repo.owner.login,
+                    name: repo.name,
+                    description: repo.description,
+                    url: repo.html_url,
+                    language: repo.language,
+                })),
+            });
+            await user.save();
+
+            return user;
         }
         return user;
     }
@@ -31,31 +42,37 @@ exports.getUser = async (username) => {
     }
 };
 
-exports.findMutualFollowers = async () => {
+exports.findMutualFriends = async (username) => {
     try {
-        const mutualFollowers = await User.aggregate([
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'username',
-                    foreignField: 'followers.username',
-                    as: 'friends'
-                }
-            },
-            {
-                $match: {
-                    'friends.followers.username': '$username'
-                }
-            }
+        const user = await User.findOne({ username });
+
+        if (user && user.friends.length > 0) {
+            return user.friends;
+        }
+        
+        const [followersResponse, followingResponse] = await Promise.all([
+            axios.get(`https://api.github.com/users/${username}/followers`),
+            axios.get(`https://api.github.com/users/${username}/following`)
         ]);
 
-        return mutualFollowers;
+        const followers_list = followersResponse.data.map(user => user.login);
+        const following_list = followingResponse.data.map(user => user.login); 
+        console.log(followers_list);
+        const mutualFriends = followers_list.filter(user => following_list.includes(user));
+
+        await User.findOneAndUpdate(
+            { username },
+            { followers_list, following_list, friends: mutualFriends },
+            { upsert: true }
+        );
+
+        return mutualFriends;
     } catch (error) {
-        throw error; 
+        throw error;
     }
 };
 
-exports.updateUser = async ({username, location,blog, bio}) => {
+exports.updateUser = async ({username,location,blog, bio}) => {
     try{
         const user = await User.findOneAndUpdate({ username }, {location, blog, bio});
         if(!user){
@@ -85,7 +102,12 @@ exports.softDeleteUser = async (username) => {
 
 exports.getUsers = async (sortBy) => {
     try{
-        const users = await User.find().sort(sortBy);
+        let sortOption = {};
+        if (sortBy) {
+            sortOption[sortBy] = -1;
+        }
+
+        const users = await User.find().sort(sortOption);
 
         return users;
     }
@@ -96,16 +118,27 @@ exports.getUsers = async (sortBy) => {
 
 exports.searchUser = async ({username, location}) => {
     try{
-        const users = await User.find({
-            $or: [
-                { username: { $regex: username, $options: 'i' } },
-                { location: { $regex: location, $options: 'i' } }
-            ]
-        });
+        let query = {};
+        if (username || location) {
+            query = {
+                $or: []
+            };
+
+            if (username) {
+                query.$or.push({ username: { $regex: username, $options: 'i' } });
+            }
+
+            if (location) {
+                query.$or.push({ location: { $regex: location, $options: 'i' } });
+            }
+        }
+        const users = await User.find(query);
 
         if(!users){
             throw new Error("users does not found");
         }
+
+        return users;
     }
     catch(error){
         throw error;

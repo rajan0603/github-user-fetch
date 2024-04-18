@@ -4,6 +4,8 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     repos_url: String,
     name: String,
+    followers_list: [String],
+    following_list: [String],
     avatarUrl: String,
     location: String,
     blog: String,
@@ -14,8 +16,14 @@ const userSchema = new mongoose.Schema({
     following: Number,
     created_at: String,
     updated_at: String,
-    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    deleted: { type: Boolean, default: false }
+    repositories: [{ 
+        username: String,
+        name: String,
+        description: String,
+        url: String,
+        language: String,
+    }],
+    friends: [String],
 });
 
 module.exports = mongoose.model('User', userSchema);
