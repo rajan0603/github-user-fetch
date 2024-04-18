@@ -1,36 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
 
-function RepositoryListPage() {
-    const { username } = useParams();
-    const [repositories, setRepositories] = useState([]);
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { setUsername, fetchRepositories } from '../../redux/actions/userActions';
 
-    useEffect(() => {
-        const fetchRepositories = async () => {
-            try {
-                const response = await axios.get(`https://api.github.com/users/${username}/repos`);
-                setRepositories(response.data);
-            } catch (error) {
-                console.error('Error fetching repositories:', error);
-            }
-        };
-        fetchRepositories();
-    }, [username]);
+function HomePage() {
+    const [input, setInput] = useState('');
+    const dispatch = useDispatch();
+    const history = useHistory();
+
+    const handleSubmit = () => {
+        dispatch(setUsername(input));
+        dispatch(fetchRepositories(input));
+        setInput('');
+        history.push(`/repositories/${input}`);
+    };
 
     return (
         <div className="container">
-            <h1>Repositories for {username}</h1>
-            <ul>
-                {repositories.map(repo => (
-                    <li key={repo.id}>
-                        <Link to={`/repositories/${username}/${repo.name}`}>{repo.name}</Link>
-                    </li>
-                ))}
-            </ul>
-            <Link to="/">Go Back</Link>
+            <h1>GitHub Repository Search</h1>
+            <input 
+                type="text" 
+                placeholder="Enter GitHub Username" 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+            />
+            <button onClick={handleSubmit}>Search</button>
         </div>
     );
 }
 
-export default RepositoryListPage;
+export default HomePage;
+
+

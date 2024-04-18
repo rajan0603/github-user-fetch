@@ -1,31 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
 
-function RepositoryDetailsPage() {
-    const { username, repoName } = useParams();
-    const [repository, setRepository] = useState({});
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-    useEffect(() => {
-        const fetchRepository = async () => {
-            try {
-                const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}`);
-                setRepository(response.data);
-            } catch (error) {
-                console.error('Error fetching repository:', error);
-            }
-        };
-        fetchRepository();
-    }, [username, repoName]);
+function RepositoryListPage() {
+    const { username, repositories } = useSelector(state => state.user);
 
     return (
         <div className="container">
-            <h1>{repository.name}</h1>
-            <p>Description: {repository.description}</p>
-            {/* Display other repository details */}
-            <Link to={`/repositories/${username}`}>Go Back to Repository List</Link>
+            <h2>Repositories for {username}</h2>
+            <ul>
+                {repositories.map(repo => (
+                    <li key={repo._id}>
+                        <Link to={`/repositories/${username}/${repo.name}`}>{repo.name}</Link>
+                    </li>
+                ))}
+            </ul>
+            <Link to={`/followers/${username}`}>View Followers</Link>
         </div>
     );
 }
 
-export default RepositoryDetailsPage;
+export default RepositoryListPage;
+

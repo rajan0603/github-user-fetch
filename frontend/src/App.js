@@ -1,5 +1,7 @@
 import React from "react";
 import './App.css';
+import { Provider } from 'react-redux';
+import store from './store/store';
 import {BrouserRouter as Router, Routes, Route} from "react-router-dom";
 import HomePage from './components/HomePage/HomePage';
 import RepositoryListPage from './components/RepositoryListPage/RepositoryListPage';
@@ -7,7 +9,7 @@ import RepositoryDetailsPage from './components/RepositoryDetailsPage/Repository
 
 function App() {
   return (
-    <div>
+    <Provider store={store}>
       <Router>
         <Routes>
           <Route path = "/" element = {HomePage}></Route>
@@ -15,7 +17,7 @@ function App() {
           <Route path = "/repositories/:username/:repoName" element = {RepositoryDetailsPage}></Route>
         </Routes>
       </Router>
-    </div>
+    </Provider>
   );
 }
 

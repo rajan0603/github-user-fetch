@@ -8,6 +8,9 @@ exports.getUser = async (username) => {
             // fetch data from api
             const res = await axios.get(`https://api.github.com/users/${username}`);
             const userData = res.data;
+
+            const reposRes = await axios.get(userData.repos_url);
+            const reposData = reposRes.data;
             
             let user = new User({
                 username: userData.login,
