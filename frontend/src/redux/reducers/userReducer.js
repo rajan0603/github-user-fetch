@@ -2,6 +2,8 @@
 const initialState = {
     username: '',
     repositories: [],
+    userData: {},
+    followers: [],
 };
 
 const userReducer = (state = initialState, action) => {
@@ -16,9 +18,20 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 repositories: action.payload,
             };
+        case 'SET_USER_DATA':
+            return {
+                ...state,
+                userData: action.payload,
+            };
+        case 'SET_FOLLOWERS':
+            return {
+                ...state,
+                followers: action.payload,
+            };
         default:
             return state;
     }
 };
 
 export default userReducer;
+

@@ -1,0 +1,101 @@
+.wrapper {
+    width: 70%;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+
+.detailsContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.rowContainer {
+    display: flex;
+}
+
+.imageContainer {
+    margin-right: 20px;
+}
+
+.image {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.categoryBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.textContainer {
+    flex-grow: 1;
+    margin-top: 50px;
+}
+
+.textContainer h3 {
+    margin-top: 0;
+}
+
+.setupButton {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.setupButton:hover {
+    background-color: #218838;
+}
+
+.setupButton:focus {
+    outline: none;
+}
+
+p {
+    margin-top: 0;
+}
+
+
+.category p{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    color:#007bff;
+}
+
+.back{
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.back h2{
+    color:#007bff;
+    padding-bottom: 10px;
+}
+
+.back button{
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    width: 60px;
+    height: 30px;
+    border-radius: 10px;
+}

@@ -15,6 +15,7 @@ exports.getUser = async (username) => {
             let user = new User({
                 username: userData.login,
                 repos_url: userData.repos_url,
+                followers_url: userData.followers_url,
                 name: userData.name,
                 avatarUrl: userData.avatar_url,
                 location: userData.location,

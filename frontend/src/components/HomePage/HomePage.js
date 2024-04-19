@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { setUsername, fetchRepositories } from '../../redux/actions/userActions';
+import { setUsername, fetchRepositories, fetchUserData } from '../../redux/actions/userActions';
 import styles from './HomePage.module.css';
 
 function HomePage() {
@@ -13,6 +13,7 @@ function HomePage() {
 
     const handleSubmit = () => {
         dispatch(setUsername(input));
+        dispatch(fetchUserData(input));
         dispatch(fetchRepositories(input));
         setInput('');
         navigate(`/repositories/${input}`);
