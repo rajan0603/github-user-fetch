@@ -38,7 +38,7 @@ export const setRepositoryDetails = (repositoryDetails) => {
 export const fetchUserData = (username) => {
     return async (dispatch) => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/users/${username}`);
+            const response = await axios.get(`https://github-user-fetch.onrender.com/api/users/${username}`);
             dispatch(setUserData(response.data));
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -60,7 +60,7 @@ export const fetchFollowers = (followersUrl) => {
 export const fetchRepositories = (username) => {
     return async (dispatch) => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/users/${username}`);
+            const response = await axios.get(`https://github-user-fetch.onrender.com/api/users/${username}`);
             dispatch(setRepositories(response.data.repositories));
         } catch (error) {
             console.error('Error fetching repositories:', error);
