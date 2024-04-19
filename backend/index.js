@@ -2,10 +2,13 @@ const express = require("express");
 require("dotenv").config({path:"./.env"});
 const mongoose = require('mongoose');
 const userRoutes = require('./components/routes/userRoutes');
+const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
+app.options("*", cors());
 
 app.use('/api/users', userRoutes);
 
